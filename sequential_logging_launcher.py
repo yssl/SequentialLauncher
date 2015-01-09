@@ -86,7 +86,7 @@ print 'STARTED at %s'%gstarttime
 print 
 print '# of total launching commands: %d'%len(launchcmds)
 for i in range(len(launchcmds)):
-    print '%d> %s'%(i, launchcmds[i])
+    print '%d> %s'%(i+1, launchcmds[i])
 print '================================================================================'
 print
 
@@ -94,7 +94,7 @@ def printEndMessage(success, starttime):
     endtime = datetime.datetime.now()
     print
     print '============================================================'
-    print '%d> %s'%(i, launchcmds[i])
+    print '%d> %s'%(i+1, launchcmds[i])
     print
     if success:
         print 'FINISHED at %s'%endtime
@@ -109,14 +109,14 @@ for i in range(len(launchcmds)):
     starttime = datetime.datetime.now()
     try:
         print '============================================================'
-        print '%d> %s'%(i, launchcmds[i])
+        print '%d> %s'%(i+1, launchcmds[i])
         print
         print 'STARTED at %s'%starttime
         print '============================================================'
         print
 
         #retcode = os.system(launchcmds[i])
-        retcode = execute(launchcmds[i], '%d> '%i, stdreplacer.writer)
+        retcode = execute(launchcmds[i], '%d> '%(i+1), stdreplacer.writer)
         if retcode==0:
             cmdresults[i] = True
             printEndMessage(True, starttime)
@@ -139,12 +139,12 @@ print
 print '# of successful launching commands: %d'%cmdresults.count(True)
 for i in range(len(launchcmds)):
     if cmdresults[i]:
-        print '%d> %s'%(i, launchcmds[i])
+        print '%d> %s'%(i+1, launchcmds[i])
 print
 print '# of failed launching commands: %d'%cmdresults.count(False)
 for i in range(len(launchcmds)):
     if not cmdresults[i]:
-        print '%d> %s'%(i, launchcmds[i])
+        print '%d> %s'%(i+1, launchcmds[i])
 print '================================================================================'
 print
 print 'This log has been saved to %s'%logpath
