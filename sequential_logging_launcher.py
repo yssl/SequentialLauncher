@@ -54,11 +54,12 @@ class DispFileStdoutReplacer(StdoutReplacer):
     def __init__(self, filename, appending=True):
         StdoutReplacer.__init__(self, DispFileWriter(filename, appending))
         
-def execute(command, insertStr):    
+def execute(command, insertStr, writer):
     popen = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     lines_iterator = iter(popen.stdout.readline, "")
     for line in lines_iterator:
         print insertStr+line, # yield line
+        writer.flush()
     retcode = popen.wait()
     return retcode
 
@@ -114,7 +115,7 @@ for i in range(len(launchcmds)):
         print
 
         #retcode = os.system(launchcmds[i])
-        retcode = execute(launchcmds[i], '%d> '%i)
+        retcode = execute(launchcmds[i], '%d> '%i, stdreplacer.writer)
         if retcode==0:
             cmdresults[i] = True
             printEndMessage(True, starttime)
