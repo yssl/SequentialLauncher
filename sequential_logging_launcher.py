@@ -73,7 +73,8 @@ launchcmds = eval(sys.argv[1])
 cmdresults = [False]*len(launchcmds)
 
 logname = datetime.datetime.now().strftime('%Y-%m-%d--%H-%M-%S')
-stdreplacer = DispFileStdoutReplacer(os.path.join(logdir, logname+'.txt'))
+logpath = os.path.join(logdir, logname+'.txt')
+stdreplacer = DispFileStdoutReplacer(logpath)
 
 gstarttime = datetime.datetime.now()
 print '================================================================================'
@@ -145,5 +146,7 @@ for i in range(len(launchcmds)):
     if not cmdresults[i]:
         print '%d> %s'%(i, launchcmds[i])
 print '================================================================================'
+print
+print 'This log has been saved to %s'%logpath
 
 stdreplacer.close()
