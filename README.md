@@ -13,5 +13,5 @@ Pass your launching commands as a command line argument in the form of [python l
 
 Examples:
 ```
-  $ python sequential_logging_launcher.py "['ls -al','ps -afx','this will be failed','cat /proc/cpuinfo']"
+$ python sequential_logging_launcher.py "['ls -al','ps -afx','this will be failed','cat /proc/cpuinfo']"
 ```
