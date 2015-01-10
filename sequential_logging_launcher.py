@@ -3,8 +3,9 @@
 # Author:       Yoonsang Lee <http://github.com/yssl>
 # License:      MIT License
 #
-# Usage
-#   ex) python sequential_logging_launcher.py "['ls','ls -al','ls -R /','ls']"
+# Usage:
+#   ex)
+#   $ python sequential_logging_launcher.py "['ls','ls -al','ls -R /','ls']"
 
 import sys, os, datetime, subprocess, traceback
 
@@ -63,6 +64,9 @@ def execute(command, insertStr, writer):
     retcode = popen.wait()
     return retcode
 
+def getPrefix(i):
+    return '%d> '%(i+1)
+
 ###################################
 # main logic
 logdir = os.path.expanduser(logdir)
@@ -72,11 +76,11 @@ if not os.path.exists(logdir):
 launchcmds = eval(sys.argv[1])
 cmdresults = [False]*len(launchcmds)
 
-logname = datetime.datetime.now().strftime('%Y-%m-%d--%H-%M-%S')
+gstarttime = datetime.datetime.now()
+logname = gstarttime.strftime('%Y-%m-%d--%H-%M-%S')
 logpath = os.path.join(logdir, logname+'.txt')
 stdreplacer = DispFileStdoutReplacer(logpath)
 
-gstarttime = datetime.datetime.now()
 print '================================================================================'
 print 'sequential_logging_launcher.py v1.0.0'
 print '- An automation script for launching a sequence of CLI processes'
@@ -86,21 +90,20 @@ print 'STARTED at %s'%gstarttime
 print 
 print '# of total launching commands: %d'%len(launchcmds)
 for i in range(len(launchcmds)):
-    print '%d> %s'%(i+1, launchcmds[i])
+    print '%s%s'%(getPrefix(i), launchcmds[i])
 print '================================================================================'
 print
 
-def printEndMessage(success, starttime):
+def printEndMessage(i, success, starttime):
     endtime = datetime.datetime.now()
     print
     print '============================================================'
-    print '%d> %s'%(i+1, launchcmds[i])
-    print
+    print '%s%s'%(getPrefix(i), launchcmds[i])
     if success:
-        print 'FINISHED at %s'%endtime
+        print '%sSUCCEEDED at %s'%(getPrefix(i), endtime)
     else:
-        print 'ERROR at %s'%endtime
-    print 'Elapsed time : %s'%(endtime-starttime)
+        print '%sFAILED at %s'%(getPrefix(i), endtime)
+    print '%sElapsed time : %s'%(getPrefix(i), endtime-starttime)
     print '============================================================'
     print
 
@@ -109,23 +112,22 @@ for i in range(len(launchcmds)):
     starttime = datetime.datetime.now()
     try:
         print '============================================================'
-        print '%d> %s'%(i+1, launchcmds[i])
-        print
-        print 'STARTED at %s'%starttime
+        print '%s%s'%(getPrefix(i), launchcmds[i])
+        print '%sSTARTED at %s'%(getPrefix(i), starttime)
         print '============================================================'
         print
 
         #retcode = os.system(launchcmds[i])
-        retcode = execute(launchcmds[i], '%d> '%(i+1), stdreplacer.writer)
+        retcode = execute(launchcmds[i], getPrefix(i), stdreplacer.writer)
         if retcode==0:
             cmdresults[i] = True
-            printEndMessage(True, starttime)
+            printEndMessage(i, True, starttime)
         else:
-            printEndMessage(False, starttime)
+            printEndMessage(i, False, starttime)
     except:
         print sys.exc_info()
         traceback.print_exc()
-        printEndMessage(False, starttime)
+        printEndMessage(i, False, starttime)
 
 
 endtime = datetime.datetime.now()
@@ -136,15 +138,15 @@ print
 print 'FINISHED at %s'%endtime
 print 'Elapsed time : %s'%(endtime-gstarttime)
 print
-print '# of successful launching commands: %d'%cmdresults.count(True)
+print '# of succeeded launching commands: %d'%cmdresults.count(True)
 for i in range(len(launchcmds)):
     if cmdresults[i]:
-        print '%d> %s'%(i+1, launchcmds[i])
+        print '%s%s'%(getPrefix(i), launchcmds[i])
 print
 print '# of failed launching commands: %d'%cmdresults.count(False)
 for i in range(len(launchcmds)):
     if not cmdresults[i]:
-        print '%d> %s'%(i+1, launchcmds[i])
+        print '%s%s'%(getPrefix(i), launchcmds[i])
 print '================================================================================'
 print
 print 'This log has been saved to %s'%logpath
