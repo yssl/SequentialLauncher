@@ -16,3 +16,8 @@ Examples:
 ```
 $ python sequential_logging_launcher.py "['ls -al','ps -afx','this will fail','ls']"
 ```
+
+###### Todo
+- command line argument options
+  - set log dir
+  - set flushing for each single line or not (or number of lines until flushing)
