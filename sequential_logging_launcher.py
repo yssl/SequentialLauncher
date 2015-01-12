@@ -87,6 +87,7 @@ print '- An automation script for launching a sequence of CLI processes'
 print '  while logging their stdout and stderr to a file.'
 print
 print 'STARTED at %s'%gstarttime
+print 'Executed in %s'%os.getcwd()
 print 
 print '# of total launching commands: %d'%len(launchcmds)
 for i in range(len(launchcmds)):
@@ -103,7 +104,7 @@ def printEndMessage(i, success, starttime):
         print '%sSUCCEEDED at %s'%(getPrefix(i), endtime)
     else:
         print '%sFAILED at %s'%(getPrefix(i), endtime)
-    print '%sElapsed time : %s'%(getPrefix(i), endtime-starttime)
+    print '%sElapsed time: %s'%(getPrefix(i), endtime-starttime)
     print '============================================================'
     print
 
@@ -136,7 +137,7 @@ print '=========================================================================
 print 'sequential_logging_launcher.py'
 print
 print 'FINISHED at %s'%endtime
-print 'Elapsed time : %s'%(endtime-gstarttime)
+print 'Elapsed time: %s'%(endtime-gstarttime)
 print
 print '# of succeeded launching commands: %d'%cmdresults.count(True)
 for i in range(len(launchcmds)):
