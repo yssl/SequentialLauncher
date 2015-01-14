@@ -1,11 +1,11 @@
 # File:         sequential_logging_launcher.py
-# Description:  An automation script for launching a sequence of CLI processes while logging their stdout and stderr to a file.
+# Description:  Automating launches of any command line interface processes, logging all their output to a file.
 # Author:       Yoonsang Lee <http://github.com/yssl>
 # License:      MIT License
 #
 # Usage:
 #   ex)
-#   $ python sequential_logging_launcher.py "['ls','ls -al','ls -R /','ls']"
+#   $ python sequential_logging_launcher.py "['ls -al','ps -afx','this will fail','ls']"
 
 import sys, os, datetime, subprocess, traceback
 
@@ -82,9 +82,8 @@ logpath = os.path.join(logdir, logname+'.txt')
 stdreplacer = DispFileStdoutReplacer(logpath)
 
 print '================================================================================'
-print 'sequential_logging_launcher.py v1.0.0'
-print '- An automation script for launching a sequence of CLI processes'
-print '  while logging their stdout and stderr to a file.'
+print 'sequential_logging_launcher.py'
+print '- Automating launches of any command line interface processes, logging all their output to a file.'
 print
 print 'STARTED at %s'%gstarttime
 print 'Executed in %s'%os.getcwd()
