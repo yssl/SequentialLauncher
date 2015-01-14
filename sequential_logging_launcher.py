@@ -131,7 +131,6 @@ for i in range(len(launchcmds)):
 
 
 endtime = datetime.datetime.now()
-print
 print '================================================================================'
 print 'sequential_logging_launcher.py'
 print
