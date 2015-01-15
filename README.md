@@ -17,7 +17,7 @@ An example:
 $ python sequential_logging_launcher.py "['ls -al','ps -afx','this will fail','ls']"
 ```
 
-Its output is:
+Output:
 ```
 ================================================================================
 sequential_logging_launcher.py
