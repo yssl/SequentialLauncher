@@ -11,14 +11,27 @@ This script allows you to automate launches of any command line interface proces
 
 ## Usage
 Pass your launching commands as a command line argument in the form of [python list](http://www.tutorialspoint.com/python/python_lists.htm), in double quotes.  
+```
+$ python sequential_logging_launcher.py -h
+usage: sequential_logging_launcher.py [-h] [-l LOG_DIRECTORY] commands
 
-An example:
+Automates launches of any command line interface processes, logs all their
+output to a file.
+
+positional arguments:
+  commands              commands string in the form of python list in double
+                        quote
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -l LOG_DIRECTORY, --log-directory LOG_DIRECTORY
+                        specify the LOG_DIRECTORY in which log files to be
+                        generated
+```
+
+## Example
 ```
 $ python sequential_logging_launcher.py "['ls -al','ps -afx','this will fail','ls']"
-```
-
-Output:
-```
 ================================================================================
 sequential_logging_launcher.py
 - Automating launches of any command line interface processes, logging all their output to a file.
@@ -115,5 +128,4 @@ This log has been saved to /home/testid/sequential_logging_launcher_log/2015-01-
 
 ###### Todo
 - command line argument options
-  - set log dir
   - set flushing for each single line or not (or number of lines until flushing)
