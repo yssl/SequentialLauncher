@@ -34,7 +34,7 @@ optional arguments:
 $ python sequential_logging_launcher.py "['ls -al','ps -afx','this will fail','ls']"
 ================================================================================
 sequential_logging_launcher.py
-- Automating launches of any command line interface processes, logging all their output to a file.
+- Automates launches of any command line interface processes and logs all their output to a file.
 
 STARTED at 2015-01-14 23:44:13.671808
 Executed in /media/sda1/Work/sequential_logging_launcher.py
