@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # File:         sequential_logging_launcher.py
 # Description:  Automating launches of any command line interface processes, logging all their output to a file.
 # Author:       Yoonsang Lee <http://github.com/yssl>
