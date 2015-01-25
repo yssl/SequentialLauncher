@@ -7,9 +7,22 @@
 #   ex)
 #   $ python sequential_logging_launcher.py "['ls -al','ps -afx','this will fail','ls']"
 
-import sys, os, datetime, subprocess, traceback
+import sys, os, datetime, subprocess, traceback, argparse
 
-logdir = '~/sequential_logging_launcher_log/'
+###################################
+# parse cmd args
+
+parser = argparse.ArgumentParser(prog='sequential_logging_launcher.py', description='Automates launches of any command line interface processes, logs all their output to a file.')
+parser.add_argument('commands', nargs=1,
+                    help='commands string in the form of python list in double quote')
+parser.add_argument('-l','--log-directory', default='~/sequential_logging_launcher_log/',
+                    help='specify the LOG_DIRECTORY in which log files to be generated')
+
+args = parser.parse_args()
+#print args
+#exit()
+
+logdir = args.log_directory
 
 ###################################
 # classes & functions
