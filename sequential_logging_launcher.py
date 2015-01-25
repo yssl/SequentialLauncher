@@ -97,7 +97,7 @@ stdreplacer = DispFileStdoutReplacer(logpath)
 
 print '================================================================================'
 print 'sequential_logging_launcher.py'
-print '- Automating launches of any command line interface processes, logging all their output to a file.'
+print '- Automates launches of any command line interface processes and logs all their output to a file.'
 print
 print 'STARTED at %s'%gstarttime
 print 'Executed in %s'%os.getcwd()
