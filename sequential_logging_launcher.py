@@ -87,7 +87,7 @@ logdir = os.path.expanduser(logdir)
 if not os.path.exists(logdir):
     os.makedirs(logdir)
 
-launchcmds = eval(sys.argv[1])
+launchcmds = eval(args.commands[0])
 cmdresults = [False]*len(launchcmds)
 
 gstarttime = datetime.datetime.now()
