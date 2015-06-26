@@ -1,29 +1,34 @@
 #!/usr/bin/env python
-# File:         sequential_logging_launcher.py
+# File:         SequentialLauncher.py
 # Description:  Automates launches of any command line interface processes and logs all their output to a file.
 # Author:       Yoonsang Lee <http://github.com/yssl>
 # License:      MIT License
 #
 # Usage:
 #   ex)
-#   $ python sequential_logging_launcher.py "['ls -al','ps -afx','this will fail','ls']"
+#   $ ./SequentialLauncher.py "['ls -al','ps -afx','this will fail','ls']"
+#   $ ./SequentialLauncher.py "['ls -al']" --log-directory ~/test-log/
+#   $ ./SequentialLauncher.py "['ls -al']" --log-open-cmd "firefox -new-tab"
 
 import sys, os, datetime, subprocess, traceback, argparse
 
 ###################################
 # parse cmd args
 
-parser = argparse.ArgumentParser(prog='sequential_logging_launcher.py', description='Automates launches of any command line interface processes, logs all their output to a file.')
+parser = argparse.ArgumentParser(prog='SequentialLauncher.py', description='Automates launches of any command line interface processes, logs all their output to a file.')
 parser.add_argument('commands', nargs=1,
                     help='commands string in the form of python list in double quote')
-parser.add_argument('-l','--log-directory', default='~/sequential_logging_launcher_log/',
+parser.add_argument('--log-directory', default='~/SequentialLauncherLog/',
                     help='specify the LOG_DIRECTORY in which log files to be generated')
+parser.add_argument('--log-open-cmd', default='',
+                    help='specify LOG_OPEN_CMD to open a log file when launching starts')
 
 args = parser.parse_args()
 #print args
 #exit()
 
 logdir = args.log_directory
+logopencmd = args.log_open_cmd
 
 ###################################
 # classes & functions
@@ -83,6 +88,7 @@ def getPrefix(i):
 
 ###################################
 # main logic
+
 logdir = os.path.expanduser(logdir)
 if not os.path.exists(logdir):
     os.makedirs(logdir)
@@ -96,7 +102,7 @@ logpath = os.path.join(logdir, logname+'.txt')
 stdreplacer = DispFileStdoutReplacer(logpath)
 
 print '================================================================================'
-print 'sequential_logging_launcher.py'
+print 'SequentialLauncher.py'
 print '- Automates launches of any command line interface processes and logs all their output to a file.'
 print
 print 'STARTED at %s'%gstarttime
@@ -107,6 +113,9 @@ for i in range(len(launchcmds)):
     print '%s%s'%(getPrefix(i), launchcmds[i])
 print '================================================================================'
 print
+
+if logopencmd!='':
+    subprocess.Popen(logopencmd.split()+[logpath])
 
 def printEndMessage(i, success, starttime):
     endtime = datetime.datetime.now()
@@ -146,7 +155,7 @@ for i in range(len(launchcmds)):
 
 endtime = datetime.datetime.now()
 print '================================================================================'
-print 'sequential_logging_launcher.py'
+print 'SequentialLauncher.py'
 print
 print 'FINISHED at %s'%endtime
 print 'Elapsed time: %s'%(endtime-gstarttime)
