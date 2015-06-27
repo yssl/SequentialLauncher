@@ -1,10 +1,10 @@
-# sequential_logging_launcher.py
+# SequentialLauncher.py
 
 This script allows you to automate launches of any command line interface processes while logging all their output to a file.
 
 ## Features
 - Automating sequential execution of any type, any number of command line interface processes.
-- Logging all output (stdout and stderr) of the subprocesses to a file per execution of this script (default location: ~/sequential_logging_launcher_log/).
+- Logging all output (stdout and stderr) of the subprocesses to a file per execution of this script (default location: ~/SequentialLauncherLog/).
 - Logging the start, end, and elapsed time of each subprocess and the whole script.
 - Reporting succeeded / falied subprocesses in the final summary, by checking the return code and raised exceptions of each subprocess.
 - Inserting a prefix at the beginning of each ouput line to show which command is currently processing.
@@ -12,8 +12,8 @@ This script allows you to automate launches of any command line interface proces
 ## Usage
 Pass your launching commands as a command line argument in the form of [python list](http://www.tutorialspoint.com/python/python_lists.htm), in double quotes.  
 ```
-$ python sequential_logging_launcher.py -h
-usage: sequential_logging_launcher.py [-h] [-l LOG_DIRECTORY] commands
+$ ./SequentialLauncher.py -h
+usage: SequentialLauncher.py [-h] [-l LOG_DIRECTORY] commands
 
 Automates launches of any command line interface processes, logs all their
 output to a file.
@@ -31,13 +31,13 @@ optional arguments:
 
 ## Example
 ```
-$ python sequential_logging_launcher.py "['ls -al','ps -afx','this will fail','ls']"
+$ ./SequentialLauncher.py "['ls -al','ps -afx','this will fail','ls']"
 ================================================================================
-sequential_logging_launcher.py
+SequentialLauncher.py
 - Automates launches of any command line interface processes and logs all their output to a file.
 
 STARTED at 2015-01-14 23:44:13.671808
-Executed in /media/sda1/Work/sequential_logging_launcher.py
+Executed in /media/sda1/Work/SequentialLauncher.py
 
 # of total launching commands: 4
 1> ls -al
@@ -100,7 +100,7 @@ Executed in /media/sda1/Work/sequential_logging_launcher.py
 ============================================================
 
 4> README.md
-4> sequential_logging_launcher.py
+4> SequentialLauncher.py
 
 ============================================================
 4> ls
@@ -109,7 +109,7 @@ Executed in /media/sda1/Work/sequential_logging_launcher.py
 ============================================================
 
 ================================================================================
-sequential_logging_launcher.py
+SequentialLauncher.py
 
 FINISHED at 2015-01-14 23:44:13.721564
 Elapsed time: 0:00:00.049756
@@ -123,9 +123,5 @@ Elapsed time: 0:00:00.049756
 3> this will fail
 ================================================================================
 
-This log has been saved to /home/testid/sequential_logging_launcher_log/2015-01-14--23-44-13.txt
+This log has been saved to /home/testid/SequentialLauncherLog/2015-01-14--23-44-13.txt
 ```
-
-###### Todo
-- command line argument options
-  - set flushing for each single line or not (or number of lines until flushing)
