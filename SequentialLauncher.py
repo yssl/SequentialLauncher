@@ -9,6 +9,7 @@
 #   $ ./SequentialLauncher.py "['ls -al','ps -afx','this will fail','ls']"
 #   $ ./SequentialLauncher.py "['ls -al']" --log-directory ~/test-log/
 #   $ ./SequentialLauncher.py "['ls -al']" --log-open-cmd "firefox -new-tab"
+#   $ ./SequentialLauncher.py "['ls -al']" --ssh-notify-address user@hostname:port
 
 import sys, os, datetime, subprocess, traceback, argparse
 
@@ -20,15 +21,18 @@ parser.add_argument('commands', nargs=1,
                     help='commands string in the form of python list in double quote')
 parser.add_argument('--log-directory', default='~/SequentialLauncherLog/',
                     help='specify the LOG_DIRECTORY in which log files to be generated')
-parser.add_argument('--log-open-cmd', default='',
+parser.add_argument('--log-open-cmd',
                     help='specify LOG_OPEN_CMD to open a log file when launching starts')
+parser.add_argument('--ssh-notify-address',
+                    help='specify user@hostname:port if you want to be notified when the job is finished')
 
 args = parser.parse_args()
 #print args
 #exit()
 
-logdir = args.log_directory
-logopencmd = args.log_open_cmd
+log_directory = args.log_directory
+log_open_cmd = args.log_open_cmd
+ssh_notify_address = args.ssh_notify_address
 
 ###################################
 # classes & functions
@@ -89,16 +93,16 @@ def getPrefix(i):
 ###################################
 # main logic
 
-logdir = os.path.expanduser(logdir)
-if not os.path.exists(logdir):
-    os.makedirs(logdir)
+log_directory = os.path.expanduser(log_directory)
+if not os.path.exists(log_directory):
+    os.makedirs(log_directory)
 
 launchcmds = eval(args.commands[0])
 cmdresults = [False]*len(launchcmds)
 
 gstarttime = datetime.datetime.now()
 logname = gstarttime.strftime('%Y-%m-%d--%H-%M-%S')
-logpath = os.path.join(logdir, logname+'.txt')
+logpath = os.path.join(log_directory, logname+'.txt')
 stdreplacer = DispFileStdoutReplacer(logpath)
 
 print '================================================================================'
@@ -114,10 +118,18 @@ for i in range(len(launchcmds)):
 print '================================================================================'
 print
 
-if logopencmd!='':
-    subprocess.Popen(logopencmd.split()+[logpath])
+if log_open_cmd:
+    subprocess.Popen(log_open_cmd.split()+[logpath])
 
-def printEndMessage(i, success, starttime):
+if ssh_notify_address:
+    tokens = ssh_notify_address.split(':')
+    ssh_hostname = tokens[0]
+    if len(tokens) > 1:
+        ssh_port = int(tokens[1])
+    else:
+        ssh_port = 22
+
+def printCmdEndMessage(i, success, starttime):
     endtime = datetime.datetime.now()
     print
     print '============================================================'
@@ -144,33 +156,55 @@ for i in range(len(launchcmds)):
         retcode = execute(launchcmds[i], getPrefix(i), stdreplacer.writer)
         if retcode==0:
             cmdresults[i] = True
-            printEndMessage(i, True, starttime)
+            printCmdEndMessage(i, True, starttime)
         else:
-            printEndMessage(i, False, starttime)
+            printCmdEndMessage(i, False, starttime)
     except:
         print sys.exc_info()
         traceback.print_exc()
-        printEndMessage(i, False, starttime)
+        printCmdEndMessage(i, False, starttime)
 
+def getScriptEndMessage():
+    s = ''
+    endtime = datetime.datetime.now()
+    s +=  '================================================================================'
+    s += '\n'
+    s +=  'SequentialLauncher.py'
+    s += '\n'
+    s += '\n'
+    s +=  'FINISHED at %s'%endtime
+    s += '\n'
+    s +=  'Elapsed time: %s'%(endtime-gstarttime)
+    s += '\n'
+    s += '\n'
+    s +=  '# of succeeded launching commands: %d'%cmdresults.count(True)
+    s += '\n'
+    for i in range(len(launchcmds)):
+        if cmdresults[i]:
+            s +=  '%s%s'%(getPrefix(i), launchcmds[i])
+            s += '\n'
+    s += '\n'
+    s +=  '# of failed launching commands: %d'%cmdresults.count(False)
+    s += '\n'
+    for i in range(len(launchcmds)):
+        if not cmdresults[i]:
+            s +=  '%s%s'%(getPrefix(i), launchcmds[i])
+            s += '\n'
+    s +=  '================================================================================'
+    s += '\n'
+    s += '\n'
+    s +=  'This log has been saved to %s'%logpath
+    s += '\n'
+    return s
 
-endtime = datetime.datetime.now()
-print '================================================================================'
-print 'SequentialLauncher.py'
-print
-print 'FINISHED at %s'%endtime
-print 'Elapsed time: %s'%(endtime-gstarttime)
-print
-print '# of succeeded launching commands: %d'%cmdresults.count(True)
-for i in range(len(launchcmds)):
-    if cmdresults[i]:
-        print '%s%s'%(getPrefix(i), launchcmds[i])
-print
-print '# of failed launching commands: %d'%cmdresults.count(False)
-for i in range(len(launchcmds)):
-    if not cmdresults[i]:
-        print '%s%s'%(getPrefix(i), launchcmds[i])
-print '================================================================================'
-print
-print 'This log has been saved to %s'%logpath
+scriptEndMessage = getScriptEndMessage()
+print scriptEndMessage
 
 stdreplacer.close()
+
+if ssh_notify_address:
+    import socket
+    infoStr = '!!! Notification from %s\n\n'%socket.gethostname()
+    infoStr += scriptEndMessage
+    os.system('ssh -p %d %s export DISPLAY=:0;zenity --info --text="%s"'
+                %(ssh_port, ssh_hostname, infoStr))
