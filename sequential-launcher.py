@@ -1,24 +1,24 @@
 #!/usr/bin/env python
-# File:         SequentialLauncher.py
+# File:         sequential-launcher.py
 # Description:  Automates launches of any command line interface processes and logs all their output to a file.
 # Author:       Yoonsang Lee <http://github.com/yssl>
 # License:      MIT License
 #
 # Usage:
 #   ex)
-#   $ ./SequentialLauncher.py "['ls -al','ps -afx','this will fail','ls']"
-#   $ ./SequentialLauncher.py "['ls -al']" --log-directory ~/test-log/
-#   $ ./SequentialLauncher.py "['ls -al']" --log-open-cmd "firefox -new-tab"
-#   $ ./SequentialLauncher.py "['ls -al']" --ssh-notify-address user@hostname:port
+#   $ ./sequential-launcher.py "['ls -al','ps -afx','this will fail','ls']"
+#   $ ./sequential-launcher.py "['ls -al']" --log-directory ~/test-log/
+#   $ ./sequential-launcher.py "['ls -al']" --log-open-cmd "firefox -new-tab"
+#   $ ./sequential-launcher.py "['ls -al']" --ssh-notify-address user@hostname:port
 
 import sys, os, datetime, subprocess, traceback, argparse
 
 ###################################
 # parse cmd args
 
-parser = argparse.ArgumentParser(prog='SequentialLauncher.py', description='Automates launches of any command line interface processes, logs all their output to a file.')
+parser = argparse.ArgumentParser(prog='sequential-launcher.py', description='Automates launches of any command line interface processes, logs all their output to a file.')
 parser.add_argument('commands', nargs=1,
-                    help='commands string in the form of python list in double quote')
+                    help='command strings in the form of python list in double quote')
 parser.add_argument('--log-directory', default='~/SequentialLauncherLog/',
                     help='specify the LOG_DIRECTORY in which log files to be generated')
 parser.add_argument('--log-open-cmd',
@@ -40,16 +40,16 @@ class MultiWriter:
     def __init__(self, *writers):
         self.writers = writers
     def write(self, text):
-        for w in self.writers: 
+        for w in self.writers:
             w.write(text)
     def close(self, text):
-        for w in self.writers: 
+        for w in self.writers:
             w.close(text)
     def flush(self):
         pass
     def close(self):
         pass
-    
+
 class DispFileWriter(MultiWriter):
     def __init__(self, filename, appending=True):
         self.logfile = file(filename, 'a' if appending else 'w')
@@ -58,7 +58,7 @@ class DispFileWriter(MultiWriter):
         self.logfile.flush()
     def close(self):
         self.logfile.close()
-        
+
 class StdoutReplacer:
     def __init__(self, writer):
         self.stdout_saved = sys.stdout
@@ -73,11 +73,11 @@ class StdoutReplacer:
         sys.stdout = self.writer
     def off(self):
         sys.stdout = self.stdout_saved
-        
+
 class DispFileStdoutReplacer(StdoutReplacer):
     def __init__(self, filename, appending=True):
         StdoutReplacer.__init__(self, DispFileWriter(filename, appending))
-        
+
 def execute(command, insertStr, writer):
     popen = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     lines_iterator = iter(popen.stdout.readline, "")
@@ -106,12 +106,12 @@ logpath = os.path.join(log_directory, logname+'.txt')
 stdreplacer = DispFileStdoutReplacer(logpath)
 
 print '================================================================================'
-print 'SequentialLauncher.py'
+print 'SequentialLauncher'
 print '- Automates launches of any command line interface processes and logs all their output to a file.'
 print
 print 'STARTED at %s'%gstarttime
 print 'Executed in %s'%os.getcwd()
-print 
+print
 print '# of total launching commands: %d'%len(launchcmds)
 for i in range(len(launchcmds)):
     print '%s%s'%(getPrefix(i), launchcmds[i])
@@ -169,7 +169,7 @@ def getScriptEndMessage():
     endtime = datetime.datetime.now()
     s +=  '================================================================================'
     s += '\n'
-    s +=  'SequentialLauncher.py'
+    s +=  'SequentialLauncher'
     s += '\n'
     s += '\n'
     s +=  'FINISHED at %s'%endtime
