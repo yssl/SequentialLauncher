@@ -108,10 +108,6 @@ Executed in /media/Work/Script-Config/bin-script
 4> STARTED at 2015-11-06 19:17:42.106878
 ============================================================
 
-4> git-do.py
-4> gitk-do.py
-4> makedali.py
-4> makegbs.py
 4> sequential-launcher.py
 
 ============================================================
